@@ -122,13 +122,13 @@ class access
     return $result;
   }
 
-  // Returns user's id via a given $token which recieved by email confirmation.
-  public function getUserID( $token )
+  // Returns user's id via a given $token which recieved by email.
+  public function getUserID( $tableName, $token )
   {
     $returnArray = array();
 
     // Create select sql statment.
-    $sql = "SELECT id FROM emailTokens WHERE token = '" . $token . "'";
+    $sql = "SELECT id FROM " . $tableName . " WHERE token = '" . $token . "'";
 
     // Execute the sql.
     $result = $this->conn->query( $sql );
@@ -171,11 +171,11 @@ class access
     return $result;
   }
 
-  // Deletes token record from 'emailTokens' table once the user confirmed his/her email address.
-  public function deleteTokenFromEmailTokensTable( $token )
+  // Deletes token record from $tableName once the user confirmed his/her email address.
+  public function deleteToken( $tableName, $token )
   {
     // Create sql command to delete the target record.
-    $sql = "DELETE FROM emailTokens WHERE token=?";
+    $sql = "DELETE FROM " . $tableName . " WHERE token=?";
 
     // prepare the delete sql.
     $sqlPrepared = $this->conn->prepare( $sql );
@@ -220,6 +220,28 @@ class access
     }
 
     return $returnArray;
+  }
+
+  // Updates user's password information.
+  public function updateUserPassword( $id, $password, $salt )
+  {
+    // Create $sql command to update password & salt record.
+    $sql = "UPDATE users SET password=?, salt=? WHERE id=?";
+    $sqlPrepared = $this->conn->prepare( $sql );
+
+    // Check for errors?
+    if ( !$sqlPrepared )
+    {
+      throw new Exception( $sqlPrepared->error );
+    }
+
+    // Bind given parameters with our $sqlPrepared statment.
+    $sqlPrepared->bind_param( "ssi", $password, $salt, $id );
+
+    // Exectue $sqlPrepared.
+    $result = $sqlPrepared->execute();
+
+    return $result;
   }
 
 }

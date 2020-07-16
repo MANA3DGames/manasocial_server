@@ -27,7 +27,7 @@ $access->connect();
 
 
 // STEP 3: Get user's id via token.
-$id = $access->getUserID( $token );
+$id = $access->getUserID( "emailTokens", $token );
 
 if ( empty( $id["id"] ) )
 {
@@ -41,7 +41,7 @@ $result = $access->updateEmailConfirmationStatus( 1, $id["id"] );
 if ( $result )
 {
   // STEP 4.1: Delete token record from emailTokens table.
-  $access->deleteTokenFromEmailTokensTable( $token );
+  $access->deleteToken( "emailTokens", $token );
 
   echo "Congratulation, Your email is now confirmed</br>";
 }
