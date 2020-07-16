@@ -65,13 +65,13 @@ if ( $result )
   require( "secure/email.php" );
 
   // Create a new instance of email.
-  $email = new email();
+  $emailInstance = new email();
 
   // Generate a new email $token.
-  $token = $email->generateToken( 20 );
+  $token = $emailInstance->generateToken( 20 );
 
   // Register a new $token record in the 'tokenTable'.
-  $access->saveToken( $user["id"], $token );
+  $access->saveToken( "emailTokens", $user["id"], $token );
 
   // Create confirmaton details.
   $details = array();
@@ -83,13 +83,13 @@ if ( $result )
   $details["toLastname"] = $user["lastname"];
 
   // Get templte html for confirmation email.
-  $template = $email->getConfirmationTemplate();
+  $template = $emailInstance->getHtmlTemplate( "confirmationTemplate" );
   // Replace {token} in html $template by $token.
   $template = str_replace( "{token}", $token, $template );
   $details["body"] = $template;
 
   // Send the email now.
-  $email->sendEmailWithSwiftMailer( $details );
+  $emailInstance->sendEmailWithSwiftMailer( $details );
 }
 else
 {

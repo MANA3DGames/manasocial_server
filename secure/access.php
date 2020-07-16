@@ -99,10 +99,10 @@ class access
   }
 
   // Saves email confirmation message's token.
-  public function saveToken( $id, $token )
+  public function saveToken( $tableName, $id, $token )
   {
     // Declare sql command.
-    $sql = "INSERT INTO emailTokens SET id=?, token=?";
+    $sql = "INSERT INTO " . $tableName . " SET id=?, token=?";
 
     // Prepare sql statement to be executed.
     $sqlPrepared = $this->conn->prepare( $sql );
@@ -123,7 +123,7 @@ class access
   }
 
   // Returns user's id via a given $token which recieved by email confirmation.
-  function getUserID( $token )
+  public function getUserID( $token )
   {
     $returnArray = array();
 
@@ -149,7 +149,7 @@ class access
   }
 
   // Update emailConfirmed status in the database.
-  function updateEmailConfirmationStatus( $status, $id )
+  public function updateEmailConfirmationStatus( $status, $id )
   {
     // Create sql update statment to update the emailConfirmed status.
     $sql = "UPDATE users SET emailConfirmed=? WHERE id=?";
@@ -172,7 +172,7 @@ class access
   }
 
   // Deletes token record from 'emailTokens' table once the user confirmed his/her email address.
-  function deleteTokenFromEmailTokensTable( $token )
+  public function deleteTokenFromEmailTokensTable( $token )
   {
     // Create sql command to delete the target record.
     $sql = "DELETE FROM emailTokens WHERE token=?";
@@ -196,7 +196,7 @@ class access
   }
 
   // Returns user information from database.
-  function getUser( $email )
+  public function getUser( $email )
   {
     $returnArray = array();
 

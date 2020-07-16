@@ -25,9 +25,9 @@ class email
   }
 
   // Opens confirmation template file and gets it html content.
-  function getConfirmationTemplate()
+  function getHtmlTemplate( $tempName )
   {
-    $path = "templates/confirmationTemplate.html";
+    $path = "templates/" . $tempName . ".html";
 
     // Open the file.
     $file = fopen( $path, "r" ) or die( "Unable to open file" );
