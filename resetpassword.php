@@ -1,15 +1,16 @@
 <?php
 
 // STEP 1: Get passed information.
-$email = htmlentities( $_REQUEST["email"] );
-
-if ( empty( $email ) )
+if ( empty( $_REQUEST["email"] ) )
 {
   $returnArray["status"] = "400";
   $returnArray["message"] = "Missing required information";
   echo json_encode( $returnArray );
   return;
 }
+
+$email = htmlentities( $_REQUEST["email"] );
+
 
 // STEP 2: Build connection.
 $file = parse_ini_file( "../ManaSocialDatabaseInfo.ini" );
@@ -26,7 +27,7 @@ $access->connect();
 
 
 // STEP 3: Check if we have a user with the given email?
-$user = $access->selectUser( $email );
+$user = $access->getUserByEmail( $email );
 
 if ( empty( $user ) )
 {

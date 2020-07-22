@@ -74,8 +74,8 @@ class access
     return $result;
   }
 
-  // Gets user data.
-  public function selectUser( $email )
+  // Gets user by email.
+  public function getUserByEmail( $email )
   {
     // Create sql command.
     $sql = "SELECT * FROM users WHERE email='" . $email . "'";
@@ -94,8 +94,29 @@ class access
         return $row;
       }
     }
+  }
 
-    return null;
+  // Returns user info by id
+  public function getUserByID( $id )
+  {
+    // Create select sql command.
+    $sql = "SELECT * FROM users WHERE id='" . $id . "'";
+
+    // Execute $sql query.
+    $result = $this->conn->query( $sql );
+
+    // Check for error then get return data.
+    if ( $result != null && mysqli_num_rows( $result ) >= 1 )
+    {
+      // Get user info as associated array.
+      $row = $result->fetch_array( MYSQLI_ASSOC );
+
+      // Check if row is empty?
+      if ( !empty( $row ) )
+      {
+        return $row;
+      }
+    }
   }
 
   // Saves email confirmation message's token.
@@ -195,33 +216,6 @@ class access
     return $result;
   }
 
-  // Returns user information from database.
-  public function getUser( $email )
-  {
-    $returnArray = array();
-
-    // Create select sql command.
-    $sql = "SELECT * FROM users WHERE email = '" . $email . "'";
-
-    // Execute $sql query.
-    $result = $this->conn->query( $sql );
-
-    // Check for error then get return data.
-    if ( $result != null && mysqli_num_rows( $result ) >= 1 )
-    {
-      // Get user info as associated array.
-      $returnArray = $result->fetch_array( MYSQLI_ASSOC );
-
-      // Check if row is empty?
-      if ( empty( $returnArray ) )
-      {
-        echo "Could not find a user with this email";
-      }
-    }
-
-    return $returnArray;
-  }
-
   // Updates user's password information.
   public function updateUserPassword( $id, $password, $salt )
   {
@@ -244,7 +238,36 @@ class access
     return $result;
   }
 
+  // Updates avatar's path for user with the given $id.
+  public function updateAvaPath( $path, $id )
+  {
+    // Create sql command to update ava.
+    $sql = "UPDATE users SET ava=? WHERE id=?";
+
+    // Prepare sql command.
+    $sqlPrepared = $this->conn->prepare( $sql );
+
+    // Check for errors?
+    if ( !$sqlPrepared )
+    {
+      throw new Exception( $sqlPrepared->error );
+    }
+
+    // Bind parameters with $sqlPrepared.
+    $sqlPrepared->bind_param( "si", $path, $id );
+
+    // Execute $sqlPrepared.
+    $result = $sqlPrepared->execute();
+
+    return $result;
+  }
+
 }
+
+
+
+
+
 
 
 

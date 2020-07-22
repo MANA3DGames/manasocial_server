@@ -1,16 +1,16 @@
 <?php
 
 // STEP 1: Check variables passing to this file via POST.
-$email = htmlentities( $_REQUEST["email"] );
-$password = htmlentities( $_REQUEST["password"] );
-
-if ( empty( $email ) || empty( $password ) )
+if ( empty( $_REQUEST["email"] ) || empty( $_REQUEST["password"] ) )
 {
   $returnArray["status"] = "400";
   $returnArray["message"] = "Missing required information";
   echo json_encode( $returnArray );
   return;
 }
+
+$email = htmlentities( $_REQUEST["email"] );
+$password = htmlentities( $_REQUEST["password"] );
 
 
 // STEP 2: Setup conneciton to database.
@@ -28,7 +28,7 @@ $access->connect();
 
 
 // STEP 3: Get the user from our database.
-$user = $access->getUser( $email );
+$user = $access->getUserByEmail( $email );
 
 // Cehck if we didn't get any user.
 if ( empty( $user ) )
@@ -44,6 +44,8 @@ if ( empty( $user ) )
 $secured_password =  trim( $user["password"] );
 $salt = $user["salt"];
 $cmpPassword = trim( sha1( trim( $password ) . $salt ) );
+
+$returnArray = array();
 
 // NOTE! for some reaseon '==' operator is not working here so I'm using strcmp func instead of it.
 if ( $secured_password == $cmpPassword )

@@ -2,12 +2,12 @@
 
 
 // STEP 1: Check given parameters.
-$token = htmlentities( $_GET["token"] );
-
-if ( empty( $token ) )
+if ( empty( $_GET["token"] ) )
 {
   echo "Missing required information";
 }
+
+$token = htmlentities( $_GET["token"] );
 
 
 // STEP 2: Build connection to database.

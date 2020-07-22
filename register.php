@@ -1,21 +1,25 @@
 <?php
 
-// STEP 1: Declare user parameters for database connection:
-// *******************************************************
-// htmlentities : for security to prevent injection.
-$email = htmlentities($_REQUEST["email"]);
-$password = htmlentities($_REQUEST["password"]);
-$firstname = htmlentities($_REQUEST["firstname"]);
-$lastname = htmlentities($_REQUEST["lastname"]);
-
 // Check if there is any missing parameters:
-if ( empty( $email ) || empty( $password ) || empty( $firstname ) || empty( $lastname ) )
+if (  empty( $_REQUEST["email"] ) ||
+      empty( $_REQUEST["password"] ) ||
+      empty( $_REQUEST["firstname"] ) ||
+      empty( $_REQUEST["lastname"] ) )
 {
   $returnArray["status"] = "400";
   $returnArray["message"] = "Missing required information";
   echo json_encode( $returnArray );
   return;
 }
+
+// STEP 1: Declare user parameters for database connection:
+// *******************************************************
+// htmlentities : for security to prevent injection.
+$email = htmlentities( $_REQUEST["email"] );
+$password = htmlentities( $_REQUEST["password"] );
+$firstname = htmlentities( $_REQUEST["firstname"] );
+$lastname = htmlentities( $_REQUEST["lastname"] );
+
 
 // Secure password:
 $salt = openssl_random_pseudo_bytes( 20 );
@@ -47,7 +51,7 @@ $result = $access->registerUser( $email, $secured_password, $salt, $firstname, $
 if ( $result )
 {
   // Get current registered user information.
-  $user = $access->selectUser( $email );
+  $user = $access->getUserByEmail( $email );
 
   // Save user information as a json.
   $returnArray["status"] = "200";
