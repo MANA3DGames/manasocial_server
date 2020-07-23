@@ -262,6 +262,30 @@ class access
     return $result;
   }
 
+  // Inserts a new post to database.
+  public function insertPost( $id, $uuid, $text, $path )
+  {
+    // Create insert sql command to insert post.
+    $sql = "INSERT INTO posts SET id=?, uuid=?, text=?, path=?";
+
+    // Prepare $sql to be executed.
+    $sqlPrepared = $this->conn->prepare( $sql );
+
+    // Check for errors?
+    if ( !$sqlPrepared )
+    {
+      throw new Exception( $sqlPrepared->error );
+    }
+
+    // Bind given parameters with $sqlPrepared.
+    $sqlPrepared->bind_param( "isss", $id, $uuid, $text, $path );
+
+    // Execute $sqlPrepared.
+    $result = $sqlPrepared->execute();
+
+    return $result;
+  }
+
 }
 
 
