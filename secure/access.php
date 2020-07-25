@@ -28,7 +28,7 @@ class access
     // Check for error.
     if ( mysqli_connect_errno() )
     {
-      echo "Could not connect to database.";
+      echo "Could not connect to database.</br>";
     }
 
     // Support all languages.
@@ -285,6 +285,51 @@ class access
 
     return $result;
   }
+
+  // Selects all user's posts
+  public function selectUserPosts( $id )
+  {
+    $returnArray = array();
+
+    // Create sql select/join command.
+    $sql = "SELECT
+    posts.id,
+    posts.uuid,
+    posts.text,
+    posts.path,
+    posts.date,
+    users.id,
+    users.firstname,
+    users.lastname,
+    users.email,
+    users.ava
+    FROM ManaSocial.posts JOIN ManaSocial.users ON
+    posts.id = $id AND users.id = $id ORDER BY date DESC";
+
+    // Prepare $sql to be executed.
+    $sqlPrepared = $this->conn->prepare( $sql );
+
+    // Check for errors?
+    if ( !$sqlPrepared )
+    {
+      throw new Exception( $sqlPrepared->error );
+    }
+
+    // Execute $sqlPrepared.
+    $sqlPrepared->execute();
+
+    // Get results from executed $sqlPrepared.
+    $result = $sqlPrepared->get_result();
+
+    // Append row one by one.
+    while ( $row = $result->fetch_assoc() )
+    {
+      $returnArray[] = $row;
+    }
+
+    return $returnArray;
+  }
+
 
 }
 
