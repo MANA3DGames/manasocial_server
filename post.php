@@ -11,9 +11,11 @@ require( "secure/access.php" );
 $access = new access( $dbHost, $dbUser, $dbPass, $dbName );
 $access->connect();
 
+$root = $_SERVER["DOCUMENT_ROOT"];
 
 $returnArray = array();
 
+// INSERT NEW POST.
 if ( !empty( $_REQUEST["id"] ) && !empty( $_REQUEST["uuid"] ) && !empty( $_REQUEST["text"] ) )
 {
   // Get provided information.
@@ -22,7 +24,6 @@ if ( !empty( $_REQUEST["id"] ) && !empty( $_REQUEST["uuid"] ) && !empty( $_REQUE
   $text = htmlentities( $_REQUEST["text"] );
 
   // Get/create current user posts folder.
-  $root = $_SERVER["DOCUMENT_ROOT"];
   $folder = $root . "/manasocialdata/" . $id . "/posts";
 
   // Check if folder doesn't exist.
@@ -61,6 +62,46 @@ if ( !empty( $_REQUEST["id"] ) && !empty( $_REQUEST["uuid"] ) && !empty( $_REQUE
   // Save post detials.
   $access->insertPost( $id, $uuid, $text, $path );
 }
+// DELETE POST.
+else if ( !empty( $_REQUEST["uuid"] ) && empty( $_REQUEST["id"] ) )
+{
+  // Get uuid & path information.
+  $uuid = htmlentities( $_REQUEST["uuid"] );
+  $path = htmlentities( $_REQUEST["path"] );
+
+  // Delete post according to uuid.
+  $result = $access->deletePost( $uuid );
+
+  if ( !empty( $result ) )
+  {
+    $returnArray["status"] = "200";
+    $returnArray["message"] = "Post was deleted successfully.";
+    $returnArray["result"] = $result;
+
+    // Delete image file.
+    if ( !empty( $path ) )
+    {
+      $path = str_replace( "http://192.168.64.2/", $root . "/", $path );
+
+      // Delete the file.
+      if ( unlink( $path ) )
+      {
+        $returnArray["status"] = "1000";
+      }
+      else
+      {
+        $returnArray["status"] = "400";
+        $returnArray["message"] = "Failed to delete post image.";
+      }
+    }
+  }
+  else
+  {
+    $returnArray["status"] = "403";
+    $returnArray["message"] = "Failed to delete targe post.";
+  }
+}
+// SELECT ALL POSTS.
 else if ( !empty( $_REQUEST["id"] ) )
 {
   // Get provided user id.

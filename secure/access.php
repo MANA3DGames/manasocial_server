@@ -330,6 +330,33 @@ class access
     return $returnArray;
   }
 
+  // Delete post with given $uuid
+  public function deletePost( $uuid )
+  {
+    // Create sql command to delete the post record.
+    $sql = "DELETE FROM posts WHERE uuid=?";
+
+    // Perpare $sql to be executed.
+    $sqlPrepared = $this->conn->prepare( $sql );
+
+    // Check for errors?
+    if ( !$sqlPrepared )
+    {
+      throw new Exception( $sqlPrepared->error );
+    }
+
+    // Bind given paramter(s) with $sqlPrepared.
+    $sqlPrepared->bind_param( "s", $uuid );
+
+    // Execute binded $sqlPrepared.
+    $sqlPrepared->execute();
+
+    // Get number of affected rows with the previous command (DELETE)
+    $result = $sqlPrepared->affected_rows;
+
+    return $result;
+  }
+
 
 }
 

@@ -1,7 +1,7 @@
 <?php
 
 // $root = $_SERVER["DOCUMENT_ROOT"];
-// $file = $root . "/manasocial/._register.php";
+// $file = $root . "/manasocialdata/80/posts/";
 //
 // unlink( $file );
 //
