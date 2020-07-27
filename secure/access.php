@@ -357,6 +357,48 @@ class access
     return $result;
   }
 
+  // Search users table with certain keyword
+  public function searchUsers( $keyword, $id )
+  {
+    $returnArray = array();
+
+    // Create sql command to SELECT user(s).
+    $sql = "SELECT id, firstname, lastname, ava FROM users WHERE NOT id='" . $id . "'";
+
+    // Check if $keyword in not empty?
+    if ( !empty( $keyword ) )
+    {
+      $sql .= " AND ( firstname LIKE ? OR lastname LIKE ? )";
+    }
+
+    // Prepare $sql command to be executed.
+    $sqlPrepared = $this->conn->prepare( $sql );
+
+    // Check for errors?
+    if ( !$sqlPrepared )
+    {
+      throw new Exception( $sqlPrepared->error );
+    }
+
+    // Again check if we have a $keyword.
+    if ( !empty( $keyword ) )
+    {
+      $keyword = '%' . $keyword . '%';
+      $sqlPrepared->bind_param( "ss", $keyword, $keyword );
+    }
+
+    // Execute $sqlPrepared.
+    $sqlPrepared->execute();
+
+    $result = $sqlPrepared->get_result();
+
+    while ( $row = $result->fetch_assoc() )
+    {
+      $returnArray[] = $row;
+    }
+
+    return $returnArray;
+  }
 
 }
 
