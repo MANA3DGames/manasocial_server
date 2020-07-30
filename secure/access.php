@@ -400,6 +400,30 @@ class access
     return $returnArray;
   }
 
+  // Updates user information.
+  public function updateUser( $firstname, $lastname, $email, $id )
+  {
+    // Create sql command to UPDATE user information.
+    $sql = "UPDATE users SET firstname=?, lastname=?, email=? WHERE id=?";
+
+    // Prepare $sql command to be executed.
+    $sqlPrepared = $this->conn->prepare( $sql );
+
+    // Check for error?
+    if ( !$sqlPrepared )
+    {
+      throw new Exception( $sqlPrepared->error );
+    }
+
+    // Bind parameters.
+    $sqlPrepared->bind_param( "sssi", $firstname, $lastname, $email, $id );
+
+    // Execute $sqlPrepared.
+    $result = $sqlPrepared->execute();
+
+    return $result;
+  }
+
 }
 
 

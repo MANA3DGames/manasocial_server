@@ -22,6 +22,7 @@ if ( !empty( $_REQUEST["id"] ) && !empty( $_REQUEST["uuid"] ) && !empty( $_REQUE
   $id = htmlentities( $_REQUEST["id"] );
   $uuid = htmlentities( $_REQUEST["uuid"] );
   $text = htmlentities( $_REQUEST["text"] );
+  $text = html_entity_decode( $text );
 
   // Get/create current user posts folder.
   $folder = $root . "/manasocialdata/" . $id . "/posts";
